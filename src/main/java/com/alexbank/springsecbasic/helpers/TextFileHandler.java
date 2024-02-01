@@ -24,7 +24,7 @@ public class TextFileHandler {
     public String getLatestTextFileName() {
 
         String textFileName = badGuyFileService.getLatestTextFileName();
-        if (textFileName == null ||textFileName.isEmpty() || textFileName.isBlank()){
+        if (textFileName == null || textFileName.isEmpty() || textFileName.isBlank()) {
             return "INDBGY.txt";
         }
         return textFileName;
@@ -32,15 +32,15 @@ public class TextFileHandler {
 
     public String createNewTextFile(String textFileName) throws IOException {
         String directory = "E:\\Projects\\Java project\\alex bank\\testcopy\\";
-        File file = new File(directory+textFileName);
+        File file = new File(directory + textFileName);
         FileInputStream fis = new FileInputStream(file);
-        byte [] bytes = new byte[(int)file.length()];
+        byte[] bytes = new byte[(int) file.length()];
         fis.read(bytes);
 
-        String [] parts = textFileName.split("\\.");
+        String[] parts = textFileName.split("\\.");
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss a");
-        String newFileName = parts[0]+"."+format.format(new Date())+"."+"txt";
-        File newFile = new File(directory+ newFileName);
+        String newFileName = parts[0] + "." + format.format(new Date()) + "." + "txt";
+        File newFile = new File(directory + newFileName);
 
         FileOutputStream fos = new FileOutputStream(newFile);
         fos.write(bytes);
@@ -50,12 +50,20 @@ public class TextFileHandler {
         return newFileName;
     }
 
-    public void appendDataToNewTextFile(List<ExcelSheetRow> excelSheetRows, String newTextFile) throws FileNotFoundException {
+    public void appendDataToNewTextFile(List<ExcelSheetRow> excelSheetRows, String newTextFile) throws IOException {
         String directory = "E:\\Projects\\Java project\\alex bank\\testcopy\\";
-        File file = new File(directory+newTextFile);
+        File file = new File(directory + newTextFile);
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
 
         PrintWriter writer = new PrintWriter(new FileOutputStream(file, true));
-        for (ExcelSheetRow row : excelSheetRows) {
+        for (int i = 0; i< excelSheetRows.size(); i++) {
+            ExcelSheetRow row = excelSheetRows.get(i);
+            String line = br.readLine();
+            if (line == null) line="";
+            if (line.startsWith("name")) {
+                continue;
+            }
             writer.print(row.getName() + ";");
             writer.print(row.getAge() + ";");
             writer.print(row.getEmail() + ";");
